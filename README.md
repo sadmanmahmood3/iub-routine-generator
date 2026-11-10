@@ -2,10 +2,9 @@
 
 A tool that helps IUB students find clash-free class routines.
 
-**Live site:** _coming soon_ <!-- TODO: add the GitHub Pages link -->
+**Live site:** https://sadmanmahmood3.github.io/iub-routine-generator/
 
-<!-- TODO: add a screenshot, e.g. save it as screenshot.png and uncomment the line below -->
-<!-- ![IUB Routine Generator screenshot](screenshot.png) -->
+![IUB Routine Generator screenshot](screenshot.png)
 
 ## Why I built it
 
