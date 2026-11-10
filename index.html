@@ -67,8 +67,39 @@
       <div id="course-list"></div>
     </section>
 
-    <!-- ===== Part 3: generating and showing routines ===== -->
+    <!-- ===== Part 3: filters, then generating and showing routines ===== -->
     <section class="card">
+      <h2>Filters</h2>
+
+      <!-- script.js listens for any change inside this box -->
+      <div id="filters" class="filters">
+        <label>
+          No classes before
+          <!-- Options are filled in by script.js from the start times you've entered -->
+          <select id="earliest-select">
+            <option value="">Any time</option>
+          </select>
+        </label>
+
+        <fieldset class="filter-days">
+          <legend>Avoid days</legend>
+          <div class="day-checks">
+            <!-- value = the IUB day letter -->
+            <label class="check"><input type="checkbox" name="avoid-day" value="A"> Sat</label>
+            <label class="check"><input type="checkbox" name="avoid-day" value="S"> Sun</label>
+            <label class="check"><input type="checkbox" name="avoid-day" value="M"> Mon</label>
+            <label class="check"><input type="checkbox" name="avoid-day" value="T"> Tue</label>
+            <label class="check"><input type="checkbox" name="avoid-day" value="W"> Wed</label>
+            <label class="check"><input type="checkbox" name="avoid-day" value="R"> Thu</label>
+          </div>
+        </fieldset>
+
+        <label class="check">
+          <input type="checkbox" id="sort-days-checkbox">
+          Sort by fewest days on campus
+        </label>
+      </div>
+
       <button id="generate-btn" type="button" class="btn primary wide">Generate routines</button>
 
       <!-- "12 possible routines found", or an explanation of which courses clash -->

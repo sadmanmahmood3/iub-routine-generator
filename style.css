@@ -111,7 +111,8 @@ label {
   font-weight: 600;
 }
 
-input {
+input,
+select {
   width: 100%;
   font: inherit;
   font-weight: 400;
@@ -122,7 +123,8 @@ input {
   color: var(--text);
 }
 
-input:focus {
+input:focus,
+select:focus {
   outline: 2px solid var(--primary);
   outline-offset: 1px;
 }
@@ -142,6 +144,52 @@ input:focus {
 /* Hide the error line completely when it has no text */
 .error:empty {
   display: none;
+}
+
+/* ---------- Filters ---------- */
+.filters {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.filters select {
+  max-width: 220px;
+}
+
+/* A fieldset groups the day checkboxes; remove its default box */
+.filter-days {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.filter-days legend {
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0;
+  margin-bottom: 6px;
+}
+
+/* The six day checkboxes sit in a row and wrap onto a new line on narrow phones */
+.day-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+/* A checkbox with its text beside it (normal labels stack text above the input) */
+label.check {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+label.check input {
+  width: auto;
+  margin: 0;
 }
 
 /* ---------- Buttons ---------- */
@@ -289,7 +337,7 @@ input:focus {
 .timetable {
   border-collapse: collapse;
   width: 100%;
-  min-width: 420px;
+  min-width: 560px; /* time column + six day columns */
 }
 
 .timetable th,

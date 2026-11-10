@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IUB Routine Generator Tests</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: #f4f6fb;
+      color: #1f2937;
+      margin: 0;
+      padding: 24px 16px;
+      line-height: 1.5;
+    }
+    main { max-width: 760px; margin: 0 auto; }
+    h1 { margin: 0 0 4px; font-size: 1.5rem; }
+    #summary { font-weight: 700; font-size: 1.1rem; }
+    #summary.all-pass { color: #15803d; }
+    #summary.some-fail { color: #b91c1c; }
+    #test-list { list-style: none; padding: 0; margin: 16px 0 0; }
+    #test-list li {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+    .badge {
+      display: inline-block;
+      min-width: 3.2em;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      border-radius: 4px;
+      padding: 1px 6px;
+      margin-right: 8px;
+      color: #ffffff;
+    }
+    .pass .badge { background: #15803d; }
+    .fail .badge { background: #b91c1c; }
+    .detail { display: block; color: #6b7280; font-size: 0.85rem; margin-top: 2px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Routine logic tests</h1>
+    <p>Runs automatically when the page opens. Your saved courses are not changed.</p>
+    <p id="summary">Running…</p>
+    <ol id="test-list"></ol>
+  </main>
+
+  <!--
+    script.js looks up these elements by id as soon as it loads, so they must exist.
+    They are hidden copies of the real page's elements. The tests click the hidden
+    "Generate" button and read the results back from them.
+  -->
+  <div hidden>
+    <form id="section-form">
+      <input id="course-input"><input id="section-input"><input id="days-input">
+      <input id="start-input"><input id="end-input">
+    </form>
+    <p id="form-error"></p>
+    <div id="course-list"></div>
+    <button id="clear-all-btn"></button>
+    <div id="filters">
+      <select id="earliest-select"></select>
+      <input type="checkbox" id="sort-days-checkbox">
+    </div>
+    <button id="generate-btn"></button>
+    <div id="result-message"></div>
+    <div id="routine-nav">
+      <button id="prev-btn"></button><span id="routine-label"></span><button id="next-btn"></button>
+    </div>
+    <div id="timetable"></div>
+    <ul id="routine-summary"></ul>
+  </div>
+
+  <!-- Load the real app code, unchanged -->
+  <script src="script.js"></script>
+
+  <script>
+    /* =========================================================
+       Tests
+
+       script.js's top-level variables (courses, filters, routines, ...)
+       are shared with this script, so each test:
+         1. puts test data into "courses" and "filters"
+         2. clicks the real (hidden) Generate button
+         3. checks "routines" and the result message
+
+       Nothing here calls saveCourses() or saveFilters(), so the data
+       saved in your browser by the real app is never touched.
+       ========================================================= */
+
+    // Shortcut for writing a section
+    function sec(number, days, start, end) {
+      return { section: number, days: days, start: start, end: end };
+    }
+
+    // The test data. A function, so every test gets a fresh copy.
+    function testCourses() {
+      return [
+        { code: "CSE303", sections: [
+          sec("1", "ST", "8:00 AM", "9:30 AM"),
+          sec("2", "MW", "11:30 AM", "1:00 PM"),
+          sec("3", "RA", "9:40 AM", "11:10 AM")
+        ] },
+        { code: "CSE310", sections: [
+          sec("1", "ST", "9:40 AM", "11:10 AM"),
+          sec("2", "MW", "8:00 AM", "9:30 AM")
+        ] },
+        { code: "CSE420", sections: [
+          sec("1", "ST", "11:30 AM", "1:00 PM"),
+          sec("2", "RA", "2:00 PM", "3:30 PM")
+        ] }
+      ];
+    }
+
+    // Runs the app's real Generate button with the given courses and filters.
+    // Any filter not mentioned is switched off.
+    function generate(courseList, filterChoices) {
+      courses = courseList;
+      filters = Object.assign({ earliest: null, avoidDays: "", sortByDays: false }, filterChoices);
+      generateBtn.click();
+      return { count: routines.length, message: resultMessage.textContent };
+    }
+
+    // Each check returns { pass: true/false, detail: "what we saw" }
+    function expectEqual(actual, expected) {
+      return { pass: actual === expected, detail: "Expected " + expected + ", got " + actual };
+    }
+
+    function expectTrue(condition, detail) {
+      return { pass: condition, detail: detail };
+    }
+
+    const tests = [
+      {
+        name: "1. No filters: 12 routines",
+        run: function () {
+          return expectEqual(generate(testCourses(), {}).count, 12);
+        }
+      },
+      {
+        name: "2. Avoid Saturday: 4 routines",
+        run: function () {
+          return expectEqual(generate(testCourses(), { avoidDays: "A" }).count, 4);
+        }
+      },
+      {
+        name: "3. No classes before 9:40 AM: 4 routines",
+        run: function () {
+          return expectEqual(generate(testCourses(), { earliest: timeToMinutes("9:40 AM") }).count, 4);
+        }
+      },
+      {
+        name: "4. Avoid Saturday + no classes before 9:40 AM: 1 routine",
+        run: function () {
+          const result = generate(testCourses(), { avoidDays: "A", earliest: timeToMinutes("9:40 AM") });
+          return expectEqual(result.count, 1);
+        }
+      },
+      {
+        name: "5. No classes before 2:00 PM: filters remove every section of CSE303 and CSE310",
+        run: function () {
+          const result = generate(testCourses(), { earliest: timeToMinutes("2:00 PM") });
+          const named = result.message.includes("remove every section of CSE303, CSE310.");
+          return expectTrue(result.count === 0 && named,
+            result.count + " routines; message: \"" + result.message + "\"");
+        }
+      },
+      {
+        name: "6. Sort by fewest days: the first routine uses 2 days",
+        run: function () {
+          generate(testCourses(), { sortByDays: true });
+          return expectEqual(countCampusDays(routines[0]), 2);
+        }
+      },
+      {
+        // Extra check for test 6: without sorting, the first routine happens to use
+        // 2 days as well, so test 6 alone can't tell whether sorting works.
+        // This checks the whole list goes from fewest to most days.
+        name: "6b. Sort by fewest days: every routine uses at least as many days as the one before",
+        run: function () {
+          generate(testCourses(), { sortByDays: true });
+          const dayCounts = routines.map(countCampusDays);
+          let sorted = true;
+          for (let i = 1; i < dayCounts.length; i++) {
+            if (dayCounts[i] < dayCounts[i - 1]) sorted = false;
+          }
+          return expectTrue(sorted, "Days per routine: " + dayCounts.join(", "));
+        }
+      },
+      {
+        name: "7. CSE303 and CSE310 both ST 8:00–9:30 AM: no routines, clashing pair named",
+        run: function () {
+          const result = generate([
+            { code: "CSE303", sections: [sec("1", "ST", "8:00 AM", "9:30 AM")] },
+            { code: "CSE310", sections: [sec("1", "ST", "8:00 AM", "9:30 AM")] }
+          ], {});
+          const named = result.message.includes("CSE303 and CSE310 clash");
+          return expectTrue(result.count === 0 && named,
+            result.count + " routines; message: \"" + result.message + "\"");
+        }
+      },
+      {
+        name: "8. Back-to-back classes (one ends 9:30, next starts 9:30) do not clash",
+        run: function () {
+          const first = sec("1", "ST", "8:00 AM", "9:30 AM");
+          const second = sec("1", "ST", "9:30 AM", "11:00 AM");
+          const clash = sectionsClash(first, second);
+          const result = generate([
+            { code: "CSE303", sections: [first] },
+            { code: "CSE310", sections: [second] }
+          ], {});
+          return expectTrue(clash === false && result.count === 1,
+            "sectionsClash returned " + clash + "; Generate found " + result.count + " routine(s)");
+        }
+      }
+    ];
+
+    // Run every test and show the results
+    const list = document.getElementById("test-list");
+    const summary = document.getElementById("summary");
+    let passed = 0;
+
+    for (const test of tests) {
+      let outcome;
+      try {
+        outcome = test.run();
+      } catch (error) {
+        // A crash counts as a failure, with the error shown
+        outcome = { pass: false, detail: "Error: " + error.message };
+      }
+      if (outcome.pass) passed++;
+
+      const item = document.createElement("li");
+      item.className = outcome.pass ? "pass" : "fail";
+
+      const badge = document.createElement("span");
+      badge.className = "badge";
+      badge.textContent = outcome.pass ? "PASS" : "FAIL";
+
+      const name = document.createElement("span");
+      name.textContent = test.name;
+
+      const detail = document.createElement("span");
+      detail.className = "detail";
+      detail.textContent = outcome.detail;
+
+      item.append(badge, name, detail);
+      list.appendChild(item);
+    }
+
+    summary.textContent = passed + " of " + tests.length + " tests passed";
+    summary.className = passed === tests.length ? "all-pass" : "some-fail";
+  </script>
+</body>
+</html>
