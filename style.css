@@ -1,0 +1,349 @@
+/* =========================================================
+   IUB Routine Generator: style.css
+   Written "mobile first": the base styles are for phones,
+   and the @media block near the bottom adjusts for wider screens.
+   ========================================================= */
+
+/* ---------- Colours and sizes used throughout the page ---------- */
+:root {
+  --bg: #f4f6fb;
+  --card: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --primary: #1d4ed8;
+  --primary-dark: #1e40af;
+  --danger: #b91c1c;
+  --danger-bg: #fef2f2;
+  --radius: 12px;
+}
+
+/* Make width/padding maths predictable for every element */
+* {
+  box-sizing: border-box;
+}
+
+/* Make sure the "hidden" attribute always hides things, even elements
+   that have their own display setting (like the flex Prev/Next bar) */
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  background: var(--primary);
+  color: #ffffff;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.site-header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.site-header p {
+  margin: 4px 0 0;
+  opacity: 0.9;
+}
+
+/* ---------- Main layout: a centred column of cards ---------- */
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px;
+  display: grid;
+  gap: 16px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.card h2 {
+  margin: 0 0 12px;
+  font-size: 1.15rem;
+}
+
+/* Heading on the left, "Clear all" button on the right */
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.card-head h2 {
+  margin: 0;
+}
+
+/* ---------- Form ---------- */
+
+/* Phones: two inputs per row */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Phones: the course code gets a full row to itself */
+.form-grid label:first-child {
+  grid-column: 1 / -1;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+  font: inherit;
+  font-weight: 400;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--text);
+}
+
+input:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 10px 0;
+}
+
+.error {
+  color: var(--danger);
+  font-size: 0.9rem;
+  margin: 0 0 10px;
+}
+
+/* Hide the error line completely when it has no text */
+.error:empty {
+  display: none;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  font: inherit;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #f3f4f6;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.btn.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+}
+
+.btn.primary:hover {
+  background: var(--primary-dark);
+}
+
+.btn.danger {
+  color: var(--danger);
+}
+
+.btn.small {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+.btn.wide {
+  width: 100%;
+}
+
+/* The small ✕ delete button next to each section */
+.btn-icon {
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.btn-icon:hover {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+/* ---------- Course list ---------- */
+.empty {
+  color: var(--muted);
+  margin: 0;
+}
+
+/* One box per course; script.js sets the coloured left border */
+.course {
+  border: 1px solid var(--border);
+  border-left-width: 6px;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
+.course h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+}
+
+.section-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.section-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  padding: 2px 0;
+}
+
+/* ---------- Results ---------- */
+.result-message {
+  margin-top: 16px;
+}
+
+.result-message:empty {
+  display: none;
+}
+
+.result-message.success {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.result-message.problem {
+  background: var(--danger-bg);
+  color: var(--danger);
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.result-message p {
+  margin: 0;
+}
+
+.result-message ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+
+.routine-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+/* ---------- Timetable ---------- */
+
+/* On narrow phones the table scrolls sideways inside this box,
+   so the page itself never scrolls sideways */
+.table-wrap {
+  overflow-x: auto;
+  margin-top: 12px;
+}
+
+.timetable {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 420px;
+}
+
+.timetable th,
+.timetable td {
+  border: 1px solid var(--border);
+  padding: 6px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 0.85rem;
+}
+
+.timetable th {
+  background: #f9fafb;
+}
+
+.timetable .time-cell {
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* A single class inside the timetable; colours are set by script.js */
+.class-block {
+  border-left: 4px solid;
+  border-radius: 6px;
+  padding: 6px 4px;
+}
+
+.class-block strong {
+  display: block;
+}
+
+.routine-summary {
+  margin: 12px 0 0;
+  padding-left: 20px;
+  font-size: 0.9rem;
+}
+
+/* ---------- Wider screens (tablets and laptops) ---------- */
+@media (min-width: 700px) {
+  /* All five inputs on one row */
+  .form-grid {
+    grid-template-columns: 2fr 1fr 1fr 1.5fr 1.5fr;
+  }
+
+  .form-grid label:first-child {
+    grid-column: auto;
+  }
+
+  main {
+    padding: 24px;
+  }
+
+  .card {
+    padding: 20px 24px;
+  }
+}

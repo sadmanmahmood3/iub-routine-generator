@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Makes the page fit phone screens instead of showing a zoomed-out desktop view -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IUB Routine Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <h1>IUB Routine Generator</h1>
+    <p>Add your courses and sections, then find every clash-free routine.</p>
+  </header>
+
+  <main>
+
+    <!-- ===== Part 1: the form for adding one section at a time ===== -->
+    <section class="card">
+      <h2>Add a section</h2>
+
+      <!-- "novalidate" turns off the browser's own popups; script.js shows friendlier errors -->
+      <form id="section-form" novalidate>
+        <div class="form-grid">
+          <label>
+            Course
+            <input id="course-input" type="text" placeholder="CSE303" autocomplete="off">
+          </label>
+          <label>
+            Section
+            <input id="section-input" type="text" placeholder="1" autocomplete="off">
+          </label>
+          <label>
+            Days
+            <input id="days-input" type="text" placeholder="ST" autocomplete="off">
+          </label>
+          <label>
+            Start time
+            <input id="start-input" type="text" placeholder="8:00 AM" autocomplete="off">
+          </label>
+          <label>
+            End time
+            <input id="end-input" type="text" placeholder="9:30 AM" autocomplete="off">
+          </label>
+        </div>
+
+        <p class="hint">
+          Days: S = Sun, M = Mon, T = Tue, W = Wed, R = Thu, A = Sat.
+          Type an existing course code to add another section to it.
+        </p>
+
+        <!-- Error messages appear here (empty = hidden) -->
+        <p id="form-error" class="error" role="alert"></p>
+
+        <button type="submit" class="btn primary">Add section</button>
+      </form>
+    </section>
+
+    <!-- ===== Part 2: the list of everything the user has entered ===== -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Your courses</h2>
+        <button id="clear-all-btn" type="button" class="btn small danger">Clear all</button>
+      </div>
+      <!-- script.js fills this in -->
+      <div id="course-list"></div>
+    </section>
+
+    <!-- ===== Part 3: generating and showing routines ===== -->
+    <section class="card">
+      <button id="generate-btn" type="button" class="btn primary wide">Generate routines</button>
+
+      <!-- "12 possible routines found", or an explanation of which courses clash -->
+      <div id="result-message" class="result-message"></div>
+
+      <!-- Prev / Next buttons (hidden until there is more than one routine) -->
+      <div id="routine-nav" class="routine-nav" hidden>
+        <button id="prev-btn" type="button" class="btn small">&#9664; Prev</button>
+        <span id="routine-label"></span>
+        <button id="next-btn" type="button" class="btn small">Next &#9654;</button>
+      </div>
+
+      <!-- The weekly timetable table goes here -->
+      <div id="timetable" class="table-wrap"></div>
+
+      <!-- A plain list of the chosen sections, handy for registration -->
+      <ul id="routine-summary" class="routine-summary"></ul>
+    </section>
+
+  </main>
+
+  <!-- Loaded last, so all the elements above already exist when the script runs -->
+  <script src="script.js"></script>
+</body>
+</html>
