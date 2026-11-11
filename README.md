@@ -1,6 +1,6 @@
 # IUB Routine Generator
 
-A tool that helps IUB students find clash-free class routines.
+A tool that helps IUB students, in fact students in general to find clash-free class routines.
 
 **Live site:** https://sadmanmahmood3.github.io/iub-routine-generator/
 
